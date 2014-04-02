@@ -27,22 +27,22 @@ Serial myPort;
 
 void setup() {
   size(400,400);
-  
-  
   cp5 = new ControlP5(this);
   
-  println(Serial.list());
-  myPort = new Serial(this, Serial.list()[4], 9600);
+  println(Serial.list()); //muestra una lista de puertos seriales presentes en máquina que está ejecutando este código.
   
+  //recordar seleccionar el puerto serial adecuado. (probablemente /dev/ttyUSB_ o /dev/ttyAMA_ en GNU/Linux y COM_ en Windows)
+  myPort = new Serial(this, Serial.list()[4], 9600);  
 
-  cp5.addButton("Iniciar_Secuencia")
+
+  cp5.addButton("Iniciar_Secuencia")  //agrega botón 1
      .setValue(0)
      .setPosition(100,100)
      .setSize(200,19)
      ;
      
-  cp5.addButton("Led_Verde")
-     .setValue(0)
+  cp5.addButton("Led_Verde")        //agrega botón 2
+     .setValue(1)
      .setPosition(100,150)
      .setSize(200,19)
      ;
@@ -54,18 +54,13 @@ void draw()
 
 }
 
-public void controlEvent(ControlEvent theEvent) 
-{
-println("botón presionado"); 
-}
-
 public void Iniciar_Secuencia(int theValue)
 {
-myPort.write("iniciar\n");
+myPort.write("iniciar\n");  //envia por puerto serial comando para activar secuencia de leds
 }
 
 public void Led_Verde(int theValue)
 {
-myPort.write("LedVerde\n");
+myPort.write("LedVerde\n"); //envia por puerto serial comando para hacer parpadear una vez el led verde
 }
 
