@@ -15,7 +15,7 @@
 */
 
 
-#include "TimerOne.h"  // TIMER interrupt
+#include "TimerOne.h"  // TIMER1 interrupt
 
 
 //LEDS EN PINES DIGITALES 8 y 9
@@ -28,7 +28,8 @@ byte boton2=2;
 byte interruptBoton1=1;        //necesario para las interrupciones!!, digital pin3
 byte interruptBoton2=0;        //necesario para las interrupciones!!, digital pin2
             
-byte tick; //Contador de segundos para la secuencia
+byte tick=-2; //Contador de segundos para la secuencia
+boolean boton2cambio=false; //bandera para el boton2.
 
 void setup() 
 {
@@ -36,64 +37,73 @@ void setup()
   pinMode(boton2, INPUT);
   pinMode(ledRojo, OUTPUT);
   pinMode(ledVerde, OUTPUT);
-  attachInterrupt(interruptBoton1, trigger, RISING);
-  
+  attachInterrupt(interruptBoton1, trigger, FALLING);  // enlaza la subrutina trigger a la interrupcion del pin digital 2. 
+  Timer1.initialize(1000000);    //Timer1 configurado a 1 segundo.
 }
 
 
 void loop() 
 {
+if(tick==0)
+     digitalWrite(ledRojo,HIGH);
+  
+else if (tick==2)   // 2 segundos
+     digitalWrite(ledVerde,HIGH);
 
+else if (tick==7) // 7 segundos
+     digitalWrite(ledVerde,LOW);
+
+else if (tick==3 )  // 3 segundos
+     {
+     if (digitalRead(boton2)==LOW)
+         Timer1.pwm(9,512,1000000);
+     attachInterrupt(interruptBoton2, cambioEstadoBoton2, CHANGE);   // enlaza la subrutina cambioEstadoBoton2() a la interrupcion del pin digital 3.
+     }
+     
+else if (tick==10) // 10 segundos
+     {            //apagar leds y desactivar interrupciones.
+     detachInterrupt (interruptBoton2);
+     digitalWrite(ledRojo,LOW);
+     Timer1.detachInterrupt();
+     Timer1.disablePwm(9);
+     tick=11;
+     }
+
+if(boton2cambio==true && (tick >=3) )
+     {
+     boton2cambio=false;          //limpiar bandera
+      
+     if (digitalRead(boton2)==LOW) 
+         {
+         Timer1.pwm(9,512,1000000);  //activar el parpadeo
+         }
+  
+     else
+         {
+         Timer1.disablePwm(9);      //desactivar el parpadeo
+         digitalWrite(ledRojo,HIGH);
+         }
+     }
 }
 
 
 
 void trigger()
 { 
-  tick=0;
-  digitalWrite(ledRojo,HIGH);
-  Timer1.attachInterrupt(procesadorSecuencia);  // attaches procesadorSecuencia() as a timer overflow interrupt
-  Timer1.initialize(1000000);         // initialize timer1, and set a 1 second 
+  Timer1.restart(); //reinicia el Timer1
+  tick=-1;
+  Timer1.attachInterrupt(contar);  // enlaza la subrutina contar() a la interrupcion del Timer1.
 }
 
-
-void procesadorSecuencia()
+void contar()
 {
-
 tick++;
-
-if (tick==2)   // 2 segundos
-     digitalWrite(ledVerde,HIGH);
-
-else if (tick==7) // 7 segundos
-     digitalWrite(ledVerde,LOW);
-
-if (tick==3 )  // entre 3 s
-     attachInterrupt(interruptBoton2, parpadear, CHANGE);
-     
-else if (tick==10) // 10 segundos
-     {
-     detachInterrupt (interruptBoton2);
-     digitalWrite(ledRojo,LOW);
-     Timer1.detachInterrupt();
-     Timer1.disablePwm(9);
-     }
-     
 }
 
 
-void parpadear() //ventana de 3 a 10 segundos
+void cambioEstadoBoton2() //flag activado cuando el boton 2 es presionado entre los segundos 3 y 10.
 {
- if (digitalRead(boton2)==HIGH) 
-     {
-     Timer1.pwm(9,512,1000000);
-     }
-
- else
-     {
-     Timer1.disablePwm(9);
-     digitalWrite(ledRojo,HIGH);
-     }
+boton2cambio=true;
 }
 
 
