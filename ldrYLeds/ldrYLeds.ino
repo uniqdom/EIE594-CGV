@@ -14,14 +14,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "TimerOne.h"  // TIMER1 interrupt
 
 
-byte ledVerde = 8;  
+byte ledVerde = 13;  
 byte ledRojo = 9;      
+boolean tiempo=false;
 
 void setup() 
 {
+pinMode(9,OUTPUT);
+pinMode(13,OUTPUT);
 Serial.begin(9600);
+Timer1.attachInterrupt( trigger);  // enlaza la subrutina trigger a la interrupcion del pin digital 2. 
+Timer1.initialize(500000);    //Timer1 configurado a 0.5 segundo.
 }
 
 
@@ -29,17 +35,26 @@ void loop()
 {
 int sensorValue = analogRead(A0);
   
-if (sensorValue>900)
+if(tiempo==true)
+  {
+  if (sensorValue>900)
     {
     digitalWrite(ledVerde,HIGH);
     digitalWrite(ledRojo,LOW);
     }
-if (sensorValue<300)
+  if (sensorValue<300)
     {
-    digitalWrite(ledRojo,HIGH
+    digitalWrite(ledRojo,HIGH);
     digitalWrite(ledVerde,LOW);
     }
   
-Serial.println(sensorValue);
-delay(500);
+  Serial.println(sensorValue);
+  tiempo=false;
+  
+}
+
+}
+
+void trigger(){
+tiempo=true;  
 }
