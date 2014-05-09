@@ -10,5 +10,9 @@ Se usó Processing para generar el juego. Las librerías utilizadas fueron:
 La idea del juego es recoger ruedas y evitar clavos. Cada rueda suma un punto, y cada par de clavos resta dos puntos. 
 ![alt tag](./GUIdelJuego.png)
 
+
+
 Las conexiones necesarias fueron las siguientes las:
+
+
 ![alt tag](./protoboard_bb.png)
