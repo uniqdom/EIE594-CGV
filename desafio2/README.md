@@ -1,6 +1,6 @@
 Desafío dos.
 
-Crear un juego que sea controlado mediante un Arduino con un acelerómetro y un botón.
+Requerimiento: Crear un juego que sea controlado mediante un Arduino con un acelerómetro y un botón.
 
 
 Se usó Processing para generar el juego. Las librerías utilizadas fueron:
@@ -10,5 +10,5 @@ Se usó Processing para generar el juego. Las librerías utilizadas fueron:
 La idea del juego es recoger ruedas y evitar clavos. Cada rueda suma un punto, y cada par de clavos resta dos puntos. 
 ![alt tag](./GUIdelJuego.png)
 
-Las conexiones necesarios son las siguientes:
+Las conexiones necesarias fueron las siguientes las:
 ![alt tag](./protoboard_bb.png)
